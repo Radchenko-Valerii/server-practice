@@ -6,6 +6,6 @@ const bodyParser = express.json();
 
 app.use(bodyParser);
 
-app.use('api', router);
+app.use('/api', router);
 
 module.exports = app;

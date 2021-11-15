@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     realName: {
       type: DataTypes.STRING(128),
-      field: 'nickname',
+      field: 'real_name',
       allowNull: false,
       validate: {
         notNull: true,

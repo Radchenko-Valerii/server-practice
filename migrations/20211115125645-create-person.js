@@ -15,7 +15,7 @@ module.exports = {
       },
       realName: {
         type: Sequelize.STRING(128),
-        field: 'nickname',
+        field: 'real_name',
         allowNull: false
       },
       originDescription: {
