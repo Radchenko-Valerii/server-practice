@@ -21,3 +21,34 @@ module.exports.createPerson = async (req, res, next) => {
     next(error);
   }
 }
+
+module.exports.updatePerson = async (req, res, next) => {
+  try{
+    const {body, params:{id}} = req;
+    
+    const [updatedRows, [updatedPerson]] = await Person.update(body, {
+      where: {id},
+      returning: true
+    })
+
+    res.send(updatedPerson)
+
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports.deletePerson = async (req, res, next) => {
+  try{
+    const {params : {id}} = req; 
+    
+    const foundPerson = await Person.findByPk(id);
+    
+    foundPerson.destroy();
+
+    res.send(foundPerson)
+    
+  } catch (error){
+    next(error)
+  }
+}
