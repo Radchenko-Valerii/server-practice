@@ -17,7 +17,9 @@ module.exports = {
           },
           key: 'id'
         },
-        field: 'person_id'
+        field: 'person_id',
+        onUpdate: 'cascade',
+        onDelete: 'cascade'
       },
       power: {
         type: Sequelize.STRING

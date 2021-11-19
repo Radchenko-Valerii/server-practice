@@ -7,7 +7,8 @@ Content-Type: application/json
   "originDescription": "The greatest of all times ever",
   "catchPhrase": "Use JQerry and regex",
   "birthday": "01-01-2001",
-  "isMale": true
+  "isMale": true,
+  "superPowers":["scream", "table tennis", "coffie"]
 }
 
 # {
