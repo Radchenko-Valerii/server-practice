@@ -17,7 +17,7 @@ module.exports.createPerson = async (req, res, next) => {
     const newPerson = await Person.create(body);
 
     if (body.superPowers.length) {
-      const personPowers = body.superPowers.map((power) => ({
+      const personPowers = body.superPowers.map(power => ({
         power,
         personId: newPerson.id,
       }));
@@ -31,7 +31,7 @@ module.exports.createPerson = async (req, res, next) => {
       include: [
         {
           model: SuperPower,
-          attributes: ['id', 'name'],
+          attributes: ['id', 'power'],
           as: 'superPowers'
         }
       ]
