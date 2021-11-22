@@ -1,10 +1,20 @@
 const { Person, SuperPower } = require("../models");
+const createHttpError = require('http-errors');
 
 module.exports.getPersons = async (req, res, next) => {
   try {
-    const persons = await Person.findAll();
+    const personsWithPower = await Person.findAll({
+      where:{},
+      include: [
+        {
+          model: SuperPower,
+          attributes: ['id', 'power'],
+          as: 'superPowers'
+        }
+      ]
+    })
 
-    res.send(persons);
+    res.status(201).send({data: personsWithPower});
   } catch (error) {
     next(error);
   }
@@ -55,7 +65,32 @@ module.exports.updatePerson = async (req, res, next) => {
       returning: true,
     });
 
-    res.send(updatedPerson);
+    if(body.superPowers){
+      const personPowers = body.superPowers.map(power => ({
+        power,
+        personId: newPerson.id,
+      }));
+      await SuperPower.bulkCreate(personPowers, { returning: true });
+    }
+
+    if (updatedRows === 0) {
+      return next(createHttpError(404));
+    }
+
+    const personWithUpdate = await Person.findAll({
+      where:{
+        id: updatedPerson.id
+      },
+      include: [
+        {
+          model: SuperPower,
+          attributes: ['id', 'power'],
+          as: 'superPowers'
+        }
+      ]
+    })
+
+    res.send({data: personWithUpdate});
   } catch (error) {
     next(error);
   }
@@ -67,11 +102,13 @@ module.exports.deletePerson = async (req, res, next) => {
       params: { id },
     } = req;
 
-    const foundPerson = await Person.findByPk(id);
+    const foundPerson = await Person.destroy({where: {id}});
+  
+    if(foundPerson === 0){
+      return next(createHttpError(404))
+    }
 
-    foundPerson.destroy();
-
-    res.send(foundPerson);
+    res.status(200).end();
   } catch (error) {
     next(error);
   }
