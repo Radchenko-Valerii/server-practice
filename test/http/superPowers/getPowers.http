@@ -1,0 +1,1 @@
+GET http://localhost:3000/api/persons/2/superPowers HTTP/1.1
