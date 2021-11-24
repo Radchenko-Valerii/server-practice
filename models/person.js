@@ -15,6 +15,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'personId',
         as: 'superPowers'
       })
+
+      Person.hasMany(models.ImagePath, {
+        foreignKey: 'personId',
+        as: 'imagePaths'
+      })
     }
   };
   Person.init({
