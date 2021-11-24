@@ -8,5 +8,7 @@ imageRouter.post('/', imageController.createImages);
 
 imageRouter.delete('/:imageId', imageController.deleteImages);
 
+imageRouter.get('/:imageId', imageController.getImageById)
+
 
 module.exports = imageRouter;
