@@ -1,8 +1,9 @@
-const { Person, SuperPower } = require("../models");
+const { Person, SuperPower, ImagePath } = require("../models");
 const createHttpError = require('http-errors');
 
 module.exports.getPersons = async (req, res, next) => {
   try {
+    const {pag} = req;
     const personsWithPower = await Person.findAll({
       where:{},
       include: [
@@ -10,8 +11,15 @@ module.exports.getPersons = async (req, res, next) => {
           model: SuperPower,
           attributes: ['id', 'power'],
           as: 'superPowers'
+        },
+        {
+          model: ImagePath,
+          attributes: ['id', 'name'],
+          as: 'images'
         }
-      ]
+      ],
+      order: [['updated_at', 'DESC']],
+      ...pag
     })
 
     res.status(201).send({data: personsWithPower});
@@ -22,7 +30,7 @@ module.exports.getPersons = async (req, res, next) => {
 
 module.exports.createPerson = async (req, res, next) => {
   try {
-    const { body } = req;
+    const { body, files } = req;
 
     const newPerson = await Person.create(body);
 
@@ -34,6 +42,17 @@ module.exports.createPerson = async (req, res, next) => {
       await SuperPower.bulkCreate(personPowers, { returning: true });
     }
 
+    if (files.length){
+      const images = files.map((file)=>({
+        path: file.path,
+        personId: newPerson.id
+      }));
+
+      await ImagePath.bulkCreate(images, {
+        returning: true
+      })
+    }
+
     const personWithPower = await Person.findAll({
       where:{
         id: newPerson.id
@@ -43,6 +62,11 @@ module.exports.createPerson = async (req, res, next) => {
           model: SuperPower,
           attributes: ['id', 'power'],
           as: 'superPowers'
+        },
+        {
+          model: ImagePath,
+          attributes: ['id', 'name'],
+          as: 'images'
         }
       ]
     })
@@ -56,7 +80,7 @@ module.exports.createPerson = async (req, res, next) => {
 module.exports.updatePerson = async (req, res, next) => {
   try {
     const {
-      body,
+      body, body:{files},
       params: { id },
     } = req;
 
@@ -73,6 +97,18 @@ module.exports.updatePerson = async (req, res, next) => {
       await SuperPower.bulkCreate(personPowers, { returning: true });
     }
 
+    if (files.length){
+      const images = files.map((file)=>({
+        path: file.path,
+        personId: newPerson.id
+      }));
+
+      await ImagePath.bulkCreate(images, {
+        returning: true
+      })
+    }
+
+
     if (updatedRows === 0) {
       return next(createHttpError(404));
     }
@@ -86,6 +122,11 @@ module.exports.updatePerson = async (req, res, next) => {
           model: SuperPower,
           attributes: ['id', 'power'],
           as: 'superPowers'
+        },
+        {
+          model: ImagePath,
+          attributes: ['id', 'name'],
+          as: 'images'
         }
       ]
     })
