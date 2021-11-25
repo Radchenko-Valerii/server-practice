@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
 
       Person.hasMany(models.ImagePath, {
         foreignKey: 'personId',
-        as: 'imagePaths'
+        as: 'images'
       })
     }
   };

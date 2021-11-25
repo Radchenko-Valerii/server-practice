@@ -14,7 +14,7 @@ module.exports.getPersons = async (req, res, next) => {
         },
         {
           model: ImagePath,
-          attributes: ['id', 'name'],
+          attributes: ['id', 'path'],
           as: 'images'
         }
       ],
@@ -34,7 +34,7 @@ module.exports.createPerson = async (req, res, next) => {
 
     const newPerson = await Person.create(body);
 
-    if (body.superPowers.length) {
+    if (body?.superPowers?.length) {
       const personPowers = body.superPowers.map(power => ({
         power,
         personId: newPerson.id,
@@ -42,7 +42,7 @@ module.exports.createPerson = async (req, res, next) => {
       await SuperPower.bulkCreate(personPowers, { returning: true });
     }
 
-    if (files.length){
+    if (files?.length){
       const images = files.map((file)=>({
         path: file.path,
         personId: newPerson.id
@@ -65,7 +65,7 @@ module.exports.createPerson = async (req, res, next) => {
         },
         {
           model: ImagePath,
-          attributes: ['id', 'name'],
+          attributes: ['id', 'path'],
           as: 'images'
         }
       ]
